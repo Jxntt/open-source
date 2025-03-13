@@ -14,6 +14,7 @@ getgenv().Settings = {
 			Enabled = true, --// false --> Will leave and keep farming Raids.
 			MinimumEggMulti = 250, --// 20 --> 20x
 			MinimumLuckyCoins = "50m",
+			MaxOpenTime = 1, --// 60 --> 60 minutes.
 		},
 	},
 
@@ -366,11 +367,12 @@ if Raid.Enabled then
 						end
 					end
 				until LuckyEgg and EggPrice
+				local StartingTime = os.time()
 				local MaxEggHatch = EggCmds.GetMaxHatch()
 				local NeedsPrice = EggPrice * MaxEggHatch
 				repeat task.wait(0.1)
 					Network.Invoke("CustomEggs_Hatch", LuckyEgg, MaxEggHatch)
-				until not CurrencyCmds.CanAfford("LuckyCoins", NeedsPrice)
+				until not CurrencyCmds.CanAfford("LuckyCoins", NeedsPrice) or (os.time() - StartingTime) >= (Raid["Egg Settings"].MaxOpenTime * 60)
 			end
 		end
 	end

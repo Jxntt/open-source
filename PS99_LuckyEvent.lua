@@ -7,7 +7,7 @@ getgenv().Settings = {
 		Difficulty = "Max", --// "Max", 1-...
 		Type = "Solo", --// "Solo", "Friends", "Friends & Clan", "Open"
 		
-		LeaveRaid = {}, --// Rejoin raid if any of these are found.
+		LeaveRaid = {"Big Chest"}, --// Rejoin raid if any of these are found.
 		OpenLeprechaunChest = false,
 		
 		["Egg Settings"] = {

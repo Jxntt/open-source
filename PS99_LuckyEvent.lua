@@ -72,7 +72,7 @@ local CustomEggsCmds = require(NLibrary.Client.CustomEggsCmds)
 local CalcEggPrice = require(NLibrary.Balancing.CalcEggPrice)
 local MasteryCmds = require(NLibrary.Client.MasteryCmds)
 local Functions = require(NLibrary.Functions)
-local EggFrontend = getsenv(Player.PlayerScripts.Scripts.Game:WaitForChild("Egg Opening Frontend"))
+local EggFrontend = getsenv(LocalPlayer.PlayerScripts.Scripts.Game:WaitForChild("Egg Opening Frontend"))
 
 local function EnterInstance(Name)
 	if InstancingCmds.GetInstanceID() == Name then return end

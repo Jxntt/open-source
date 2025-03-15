@@ -11,7 +11,8 @@ getgenv().Settings = {
 		--// Chest, Big Chest, Massive Chest, Pot Of Gold Chest
 
 		OpenLeprechaunChest = false,
-		
+		OpenBoss3Room = false,
+
 		["Egg Settings"] = {
 			Enabled = false, --// false --> Will leave and keep farming Raids.
 			MinimumEggMulti = 250, --// 20 --> 20x
@@ -280,7 +281,7 @@ local function OpenBossRooms(CurrentRaid)
 			local BillboardDistance = (HumanoidRootPart.Position - Billboard.Position)
 			local HowFarAway = BillboardDistance:Dot(Billboard.CFrame.LookVector)
 			if HowFarAway <= 70 or (HowFarAway < 0 and HowFarAway >= -250) then
-				if i ~= 3 or (i == 3 and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
+				if i ~= 3 or (i == 3 and Raid.OpenBoss3Room and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
 					Network.Invoke("Raids_StartBoss", i)
 				end
 			end

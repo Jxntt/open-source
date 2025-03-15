@@ -77,6 +77,7 @@ local CalcEggPrice = require(NLibrary.Balancing.CalcEggPrice)
 local MasteryCmds = require(NLibrary.Client.MasteryCmds)
 local Functions = require(NLibrary.Functions)
 local EggFrontend = getsenv(LocalPlayer.PlayerScripts.Scripts.Game:WaitForChild("Egg Opening Frontend"))
+local Raids = require(NLibrary.Types.Raids)
 
 local function EnterInstance(Name)
 	if InstancingCmds.GetInstanceID() == Name then return end
@@ -275,15 +276,10 @@ end
 
 local function OpenBossRooms(CurrentRaid)
 	if not CurrentRaid then return end
-	for i,v in pairs(CurrentRaid._bosses) do
-		if not v.Completed and v.Billboard then
-			local Billboard = v.Billboard.Parent
-			local BillboardDistance = (HumanoidRootPart.Position - Billboard.Position)
-			local HowFarAway = BillboardDistance:Dot(Billboard.CFrame.LookVector)
-			if HowFarAway <= 70 or (HowFarAway < 0 and HowFarAway >= -250) then
-				if i ~= 3 or (i == 3 and Raid.OpenBoss3Room and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
-					Network.Invoke("Raids_StartBoss", i)
-				end
+	for i,v in pairs(Raids.BossDirectory) do
+		if CurrentRaid._roomNumber >= v.RequiredRoom then
+			if i ~= 3 or (i == 3 and Raid.OpenBoss3Room and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
+				Network.Invoke("Raids_StartBoss", i)
 			end
 		end
 	end

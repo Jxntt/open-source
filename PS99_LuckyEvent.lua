@@ -322,7 +322,7 @@ if Raid.Enabled then
 					LeftOnPurpose = true;
 					break 
 				end
-				if not MapCmds.IsInDottedBox() and v:FindFirstChildOfClass("MeshPart") then
+				if not MapCmds.IsInDottedBox() and v and v:FindFirstChildOfClass("MeshPart") then
 					Name = v:GetAttribute("BreakableID")
 					Name = (Name:gsub("LuckyRaid", ""):gsub("(%l)(%u)", "%1 %2"))
 					if Raid.LeaveRaid and table.find(Raid.LeaveRaid, Name) then

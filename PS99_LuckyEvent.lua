@@ -12,7 +12,8 @@ getgenv().Settings = {
 
 		OpenLeprechaunChest = false,
 		OpenBoss3Room = false,
-
+		UpgradeBossChests = true,
+		
 		["Egg Settings"] = {
 			Enabled = false, --// false --> Will leave and keep farming Raids.
 			MinimumEggMulti = 250, --// 20 --> 20x
@@ -278,6 +279,7 @@ local function OpenBossRooms(CurrentRaid)
 	if not CurrentRaid then return end
 	for i,v in pairs(Raids.BossDirectory) do
 		if CurrentRaid._roomNumber >= v.RequiredRoom then
+			Network.Invoke("LuckyRaid_PullLever", v.BossNumber)
 			if v.BossNumber ~= 3 or (v.BossNumber == 3 and Raid.OpenBoss3Room and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
 				Network.Invoke("Raids_StartBoss", v.BossNumber)
 			end

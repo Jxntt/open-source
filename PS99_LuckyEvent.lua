@@ -7,7 +7,9 @@ getgenv().Settings = {
 		Difficulty = "Max", --// "Max", 1-...
 		Type = "Solo", --// "Solo", "Friends", "Friends & Clan", "Open"
 		
-		LeaveRaid = {}, --// Rejoin raid if any of these are found.
+		LeaveRaid = {""}, --// Rejoin raid if any of these are found.
+		--// Chest, Big Chest, Massive Chest, Pot Of Gold Chest
+
 		OpenLeprechaunChest = false,
 		
 		["Egg Settings"] = {
@@ -270,6 +272,22 @@ EggFrontend.PlayEggAnimation = function(...)
     return
 end
 
+local function OpenBossRooms(CurrentRaid)
+	if not CurrentRaid then return end
+	for i,v in pairs(CurrentRaid._bosses) do
+		if not v.Completed and v.Billboard then
+			local Billboard = v.Billboard.Parent
+			local BillboardDistance = (HumanoidRootPart.Position - Billboard.Position)
+			local HowFarAway = BillboardDistance:Dot(Billboard.CFrame.LookVector)
+			if HowFarAway <= 70 or (HowFarAway < 0 and HowFarAway >= -250) then
+				if i ~= 3 or (i == 3 and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
+					Network.Invoke("Raids_StartBoss", i)
+				end
+			end
+		end
+	end
+end
+
 if Raid.Enabled then
 	while task.wait() and Raid.Enabled do
 		EnterInstance("LuckyEventWorld")
@@ -333,6 +351,7 @@ if Raid.Enabled then
 					end
 					LastBreakable = _
 					HumanoidRootPart.CFrame = v:FindFirstChildOfClass("MeshPart").CFrame * CFrame.new(0,2,0)
+					OpenBossRooms(CurrentRaid)
 				end
 				FarmBreakables()
 			until ActiveInstances.LuckyRaid.INTERACT:FindFirstChild("LootChest")
@@ -344,6 +363,7 @@ if Raid.Enabled then
 				end
 				local Success;
 				HumanoidRootPart.CFrame = Chest:FindFirstChildOfClass("MeshPart").CFrame
+				OpenBossRooms(CurrentRaid)
 				repeat task.wait(0.25)
 					Success = Network.Invoke("Raids_OpenChest", Chest.Name)
 				until Success

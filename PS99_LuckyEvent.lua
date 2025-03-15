@@ -278,8 +278,8 @@ local function OpenBossRooms(CurrentRaid)
 	if not CurrentRaid then return end
 	for i,v in pairs(Raids.BossDirectory) do
 		if CurrentRaid._roomNumber >= v.RequiredRoom then
-			if i ~= 3 or (i == 3 and Raid.OpenBoss3Room and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
-				Network.Invoke("Raids_StartBoss", i)
+			if v.BossNumber ~= 3 or (v.BossNumber == 3 and Raid.OpenBoss3Room and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
+				Network.Invoke("Raids_StartBoss", v.BossNumber)
 			end
 		end
 	end

@@ -7,7 +7,7 @@ getgenv().Settings = {
 		Difficulty = "Max", --// "Max", 1-...
 		Type = "Solo", --// "Solo", "Friends", "Friends & Clan", "Open"
 		
-		LeaveRaid = {""}, --// Rejoin raid if any of these are found.
+		LeaveRaid = {}, --// Rejoin raid if any of these are found.
 		--// Chest, Big Chest, Massive Chest, Pot Of Gold Chest
 
 		OpenLeprechaunChest = false,

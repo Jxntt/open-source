@@ -289,8 +289,13 @@ local function OpenBossRooms(CurrentRaid)
 				task.wait(0.25)
 			end
 			if v.BossNumber ~= 3 or (v.BossNumber == 3 and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
-				Network.Invoke("Raids_StartBoss", v.BossNumber)
-				task.wait(v.BossNumber == 3 and 0.5 or 0.1)
+				local timer = os.time()
+				repeat task.wait() 
+					Success, Error = Network.Invoke("Raids_StartBoss", v.BossNumber)
+				until Success or Error or os.time()-timer >= 5
+				if Success then
+					task.wait(v.BossNumber == 3 and 1 or 0.25)
+				end
 			end
 		end
 	end
@@ -340,7 +345,6 @@ if Raid.Enabled then
 			local RaidID = CurrentRaid._id
 			Network.Invoke("Raids_Join", RaidID)
 			repeat task.wait() until ActiveInstances:FindFirstChild("LuckyRaid")
-			Network.Invoke("Raids_Join", RaidID)
 			local StartingTime = os.time()
 			local LastBreakable;
 			local Name;

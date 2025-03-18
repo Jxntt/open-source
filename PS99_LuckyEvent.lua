@@ -10,7 +10,7 @@ getgenv().Settings = {
 		LeaveRaid = {}, --// Rejoin raid if any of these are found.
 		--// Chest, Big Chest, Massive Chest, Pot Of Gold Chest
 
-		OpenBosses = {"Boss 1", "Boss 2"},
+		OpenBosses = {"Boss 1", "Boss 2", "Boss 3"},
 		UpgradeBossChests = true,
 		OpenLeprechaunChest = false,
 		
@@ -290,6 +290,7 @@ local function OpenBossRooms(CurrentRaid)
 			end
 			if v.BossNumber ~= 3 or (v.BossNumber == 3 and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
 				Network.Invoke("Raids_StartBoss", v.BossNumber)
+				task.wait(v.BossNumber == 3 and 0.5 or 0.1)
 			end
 		end
 	end
@@ -345,6 +346,7 @@ if Raid.Enabled then
 			local Name;
 			local Breakable, Data;
 			repeat task.wait(0.1)
+				OpenBossRooms(CurrentRaid)
 				Breakable, Data = next(BreakablesList)
 				if not Data and (os.time()-StartingTime) >= 10 then
 					--// Breakables most likely didn't spawn, restarting raid
@@ -361,7 +363,6 @@ if Raid.Enabled then
 					end
 					LastBreakable = Breakable
 					HumanoidRootPart.CFrame = Data:FindFirstChildOfClass("MeshPart").CFrame * CFrame.new(0,2,0)
-					OpenBossRooms(CurrentRaid)
 				end
 				FarmBreakables()
 			until ActiveInstances.LuckyRaid.INTERACT:FindFirstChild("LootChest") and not Breakable

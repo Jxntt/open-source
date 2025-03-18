@@ -13,7 +13,6 @@ getgenv().Settings = {
 		OpenBosses = {"Boss 1", "Boss 2"},
 		UpgradeBossChests = true,
 		OpenLeprechaunChest = false,
-
 		
 		["Egg Settings"] = {
 			Enabled = false, --// false --> Will leave and keep farming Raids.

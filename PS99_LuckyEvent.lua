@@ -10,9 +10,10 @@ getgenv().Settings = {
 		LeaveRaid = {}, --// Rejoin raid if any of these are found.
 		--// Chest, Big Chest, Massive Chest, Pot Of Gold Chest
 
-		OpenLeprechaunChest = false,
-		OpenBoss3Room = false,
+		OpenBosses = {"Boss 1", "Boss 2"},
 		UpgradeBossChests = true,
+		OpenLeprechaunChest = false,
+
 		
 		["Egg Settings"] = {
 			Enabled = false, --// false --> Will leave and keep farming Raids.
@@ -225,6 +226,11 @@ local function FarmBreakables()
 
     local BreakableArray = {}
     for UID, Breakable in pairs(BreakablesList) do
+		Name = Breakable:GetAttribute("BreakableID")
+		Name = (Name:gsub("LuckyRaid", ""):gsub("(%l)(%u)", "%1 %2"))
+		if Raid.LeaveRaid and table.find(Raid.LeaveRaid, Name) then
+			continue
+		end
         table.insert(BreakableArray, UID)
     end
 
@@ -278,18 +284,22 @@ end
 local function OpenBossRooms(CurrentRaid)
 	if not CurrentRaid then return end
 	for i,v in pairs(Raids.BossDirectory) do
-		if CurrentRaid._roomNumber >= v.RequiredRoom then
-			Network.Invoke("LuckyRaid_PullLever", v.BossNumber)
-			if v.BossNumber ~= 3 or (v.BossNumber == 3 and Raid.OpenBoss3Room and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
+		if CurrentRaid._roomNumber >= v.RequiredRoom and table.find(Raid.OpenBosses, "Boss "..v.BossNumber) then
+			if Raid.UpgradeBossChests then
+				Network.Invoke("LuckyRaid_PullLever", v.BossNumber)
+				task.wait(0.25)
+			end
+			if v.BossNumber ~= 3 or (v.BossNumber == 3 and Items.Misc("Lucky Raid Boss Key"):CountExact() >= 1) then
 				Network.Invoke("Raids_StartBoss", v.BossNumber)
 			end
 		end
 	end
 end
 
+
+EnterInstance("LuckyEventWorld")
 if Raid.Enabled then
 	while task.wait() and Raid.Enabled do
-		EnterInstance("LuckyEventWorld")
 
 		--// Purchase Upgrades
 		if Main and Main.PurchaseUpgrades then
@@ -313,6 +323,7 @@ if Raid.Enabled then
 					break
 				end
 			end
+			Network.Fire("Instancing_PlayerLeaveInstance", "LuckyRaid")
 			--// Create portal using user params.
 			Network.Invoke("Raids_RequestCreate", {
 				["Difficulty"] = (type(Raid.Difficulty) == "number" and Level >= Raid.Difficulty and Raid.Difficulty) or Level,
@@ -325,35 +336,36 @@ if Raid.Enabled then
 			CurrentRaid = RaidInstance.GetByOwner(JoinRaid or LocalPlayer)
 		until CurrentRaid
 		if CurrentRaid then
-
 			--// Farming Raids \\--
 			local RaidID = CurrentRaid._id
 			Network.Invoke("Raids_Join", RaidID)
 			repeat task.wait() until ActiveInstances:FindFirstChild("LuckyRaid")
+			Network.Invoke("Raids_Join", RaidID)
 			local StartingTime = os.time()
 			local LastBreakable;
 			local Name;
+			local Breakable, Data;
 			repeat task.wait(0.1)
-				local _, v = next(BreakablesList)
-				if not v and (os.time()-StartingTime) >= 15 then
+				Breakable, Data = next(BreakablesList)
+				if not Data and (os.time()-StartingTime) >= 10 then
 					--// Breakables most likely didn't spawn, restarting raid
 					LeftOnPurpose = true;
 					break 
 				end
-				if (LastBreakable ~= _ or not MapCmds.IsInDottedBox()) and v and v:FindFirstChildOfClass("MeshPart") then
-					Name = v:GetAttribute("BreakableID")
+				if (LastBreakable ~= Breakable or not MapCmds.IsInDottedBox()) and Data and Data:FindFirstChildOfClass("MeshPart") then
+					Name = Data:GetAttribute("BreakableID")
 					Name = (Name:gsub("LuckyRaid", ""):gsub("(%l)(%u)", "%1 %2"))
 					if Raid.LeaveRaid and table.find(Raid.LeaveRaid, Name) then
 						--// Breakable is part of banned breakable list, leave/restart
 						LeftOnPurpose = true
 						break
 					end
-					LastBreakable = _
-					HumanoidRootPart.CFrame = v:FindFirstChildOfClass("MeshPart").CFrame * CFrame.new(0,2,0)
+					LastBreakable = Breakable
+					HumanoidRootPart.CFrame = Data:FindFirstChildOfClass("MeshPart").CFrame * CFrame.new(0,2,0)
 					OpenBossRooms(CurrentRaid)
 				end
 				FarmBreakables()
-			until ActiveInstances.LuckyRaid.INTERACT:FindFirstChild("LootChest")
+			until ActiveInstances.LuckyRaid.INTERACT:FindFirstChild("LootChest") and not Breakable
 			
 			--// Loop through every chest the player can open, really stupid but not terrible lmao
 			for _, Chest in pairs(ActiveInstances.LuckyRaid.INTERACT:GetChildren()) do
@@ -362,8 +374,7 @@ if Raid.Enabled then
 				end
 				local Success;
 				HumanoidRootPart.CFrame = Chest:FindFirstChildOfClass("MeshPart").CFrame
-				OpenBossRooms(CurrentRaid)
-				repeat task.wait(0.25)
+				repeat task.wait()
 					Success = Network.Invoke("Raids_OpenChest", Chest.Name)
 				until Success
 			end

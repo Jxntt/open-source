@@ -10,21 +10,21 @@ getgenv().Settings = {
 		LeaveRaid = {}, --// Rejoin raid if any of these are found.
 		--// Chest, Big Chest, Massive Chest, Pot Of Gold Chest
 
-		OpenBosses = {"Boss 1", "Boss 2", "Boss 3"},
+		OpenBosses = {},
 		UpgradeBossChests = true,
 		OpenLeprechaunChest = false,
 		
 		["Egg Settings"] = {
-			Enabled = false, --// false --> Will leave and keep farming Raids.
-			MinimumEggMulti = 250, --// 20 --> 20x
-			MinimumLuckyCoins = "50m",
-			MaxOpenTime = 1, --// 60 --> 60 minutes.
+			Enabled = true, --// false --> Will leave and keep farming Raids.
+			MinimumEggMulti = 700, --// 20 --> 20x
+			MinimumLuckyCoins = "1m",
+			MaxOpenTime = 50000, --// 60 --> 60 minutes.
 		},
 	},
 
 	["Main Area Settings"] = {
 		FarmArea = false,
-		PurchaseUpgrades = true,
+		PurchaseUpgrades = false,
 	},
 
 	[[ Created by System Exodus // Jxnt ]]

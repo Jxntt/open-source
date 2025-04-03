@@ -323,7 +323,6 @@ Module.AddCommas = function(Amount)
 end
 
 Module.ConvertTime = function(Seconds)
-    local function ConvertSeconds(Seconds)
         local Days = math.floor(Seconds / (24 * 3600))
         Seconds = Seconds % (24 * 3600)
         local Hours = math.floor(Seconds / 3600)
@@ -342,7 +341,6 @@ Module.ConvertTime = function(Seconds)
         end
         Time = Time .. Seconds .. "s"
         return Time
-    end
 end
 
 Module.EnterInstance = function(Name)

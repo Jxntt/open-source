@@ -356,7 +356,7 @@ Module.EnterInstance = function(Name)
 	end
 end
 
-Module.Optimize = function()
+Module.Optimize = function(FPS)
     --// User Settings & Properties
     UserSettings():GetService("UserGameSettings").GraphicsQualityLevel = 1
     UserSettings():GetService("UserGameSettings").SavedQualityLevel = Enum.SavedQualitySetting.QualityLevel1
@@ -494,7 +494,7 @@ Module.Optimize = function()
     end
     StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
     GuiService.TouchControlsEnabled = false
-    setfpscap(10)
+    setfpscap(FPS or 10)
 end
 
 

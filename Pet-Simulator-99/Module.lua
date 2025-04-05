@@ -84,12 +84,14 @@ local Events = {
     ["Created"] = CreateBreakable,
     ["Ping"] = CreateBreakable,
     ["Destroyed"] = CleanBreakable,
-    ["Cleanup"] = CleanBreakable,
-    ["StageChange"] = function(...) end
-},
+    ["Cleanup"] = CleanBreakable
+}
+if not LPH_OBFUSCATED then
+    getfenv().LPH_NO_VIRTUALIZE = function(...) return ... end
+end
 
 for Action, Func in pairs(Events) do
-    local Event = Category .. "_" .. Action
+    local Event = "Breakables" .. "_" .. Action
     local Handler = Func
         
     Handler = LPH_NO_VIRTUALIZE(function(Data)
@@ -496,6 +498,5 @@ Module.Optimize = function(FPS)
     GuiService.TouchControlsEnabled = false
     setfpscap(FPS or 10)
 end
-
 
 return Module

@@ -53,7 +53,7 @@ local LoadModules = function(Path, IsOne, LoadItself)
 end
 if not getgenv().Library then
     getgenv().Library = {}
-    for _,v in next, {NLibrary, NLibrary.Directory, NLibrary.Client, NLibrary.Util, NLibrary.Items, NLibrary.Functions, NLibrary.Modules, NLibrary.Balancing} do
+    for _,v in next, {NLibrary, NLibrary.Directory, NLibrary.Client, NLibrary.Util, NLibrary.Types, NLibrary.Items, NLibrary.Functions, NLibrary.Modules, NLibrary.Balancing} do
         LoadModules(v)
     end
     LoadModules(NLibrary.Shared.Variables, true)

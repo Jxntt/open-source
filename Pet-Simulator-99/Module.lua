@@ -79,24 +79,26 @@ local function CleanBreakable(Breakable)
         Breakables[Breakable] = nil
     end)
 end
-Library.Network.Fired("Breakables_Created"):Connect(function(Breakables)
-    pcall(function()
-        for _, Breakable in next, unpack(Breakables) do
-            CreateBreakable(Breakable)
+
+local Events = {
+    ["Created"] = CreateBreakable,
+    ["Ping"] = CreateBreakable,
+    ["Destroyed"] = CleanBreakable,
+    ["Cleanup"] = CleanBreakable,
+    ["StageChange"] = function(...) end
+},
+
+for Action, Func in pairs(Events) do
+    local Event = Category .. "_" .. Action
+    local Handler = Func
+        
+    Handler = LPH_NO_VIRTUALIZE(function(Data)
+        for i = 1, #Data do 
+            Func(unpack(Data[i])) 
         end
     end)
-end)
-Library.Network.Fired("Breakables_Destroyed"):Connect(function(Breakables)
-    pcall(function()
-        for _, Breakable in next, unpack(Breakables) do
-            CleanBreakable(Breakable)
-        end
-    end)
-end)
-BreakablesScript.createBreakable = CreateBreakable
-BreakablesScript.cleanupBreakable = CleanBreakable
-BreakablesScript.destroyBreakable = CleanBreakable
-BreakablesScript.updateBreakable = function(...) end
+    Library.Network.Fired(Event):Connect(Handler)
+end
 for _, v in next, workspace.__THINGS.Breakables:GetChildren() do
     if v:IsA("Model") then
         local UID = v:GetAttribute("BreakableUID")

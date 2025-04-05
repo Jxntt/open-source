@@ -27,7 +27,6 @@ local Character = LocalPlayer.Character
 local HumanoidRootPart = Character.HumanoidRootPart
 local NLibrary = ReplicatedStorage.Library
 local PlayerScripts = LocalPlayer.PlayerScripts.Scripts
-local BreakablesScript = PlayerScripts.Game:FindFirstChild("Breakables Frontend") and getsenv(PlayerScripts.Game["Breakables Frontend"]) or getsenv(PlayerScripts.Game.Breakables["Breakables Frontend"])
 
 local LoadModules = function(Path, IsOne, LoadItself)
     if IsOne then
@@ -61,6 +60,7 @@ if not getgenv().Library then
     LoadModules(NLibrary.Client.OrbCmds.Orb, true)
     LoadModules(NLibrary.Client.MiningCmds.BlockWorldClient, true)
 end
+local BreakablesScript = PlayerScripts.Game:FindFirstChild("Breakables Frontend") and getsenv(PlayerScripts.Game["Breakables Frontend"]) or Library.BreakablesFrontend
 
 --// Handle Breakables
 local Breakables = {}
